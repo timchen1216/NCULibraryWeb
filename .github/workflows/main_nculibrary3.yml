@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'NCUlibrary3'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_ED7A63B791B14D5CA3C50AD012E4B1F9 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_12DEA94A6B6A4917AEED422C1591972D }}
