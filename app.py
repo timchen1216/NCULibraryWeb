@@ -1,18 +1,6 @@
-import pymongo
-client = pymongo.MongoClient("mongodb+srv://che:che@mycluster.6t3lr.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
-db = client.book
-
-correct=db.correct
-detect=db.detect
-mis=db.mis
-
-from flask import *
-app = Flask(
-    __name__,
-    # static_folder="static",
-    # static_url_path = "/"
-)
-app.secret_key = "any string"
+import re, sqlite3
+from flask import Flask, render_template, url_for, request
+app = Flask(__name__)
 
 #主頁
 @app.route("/")
@@ -21,45 +9,26 @@ def index():
 # 檢查操作
 @app.route("/detectdata")
 def detectdata():
-    mis.drop()
+    con = sqlite3.connect('LibraryWeb.db')
+    cur = con.cursor()
+
+    correct = {}
+    for cor in cur.execute(f'SELECT * FROM correct'):
+        correct[cor[1]] = int(cor[2])
+    # print(correct)
+
     miss = []
-    for i in range(1,5):
-        cor = correct.find({
-            "書櫃" : i
-        })
-        c = []#正確資料集合內 書櫃1~4內的編號
-        for co in cor:
-            c.append(co["編號"])
-        
-        det = detect.find({
-            "書櫃" : i
-        })
-        d = []#偵測資料集合內 書櫃1~4內的編號
-        for de in det:
-            d.append(de["編號"])
-
-        m = [ x for x in d if x not in c ]#在d列表中而不在c列表中
-
-        for j in m:
-            correctresult = correct.find_one({
-                "編號" : j
-            })
-            detectresult = detect.find_one({
-                "編號" : j
-            })
-            mis.insert_one({
-                "編號" : j,
-                "目前位置" : detectresult["書櫃"],
-                "正確位置" : correctresult["書櫃"]
-            })
-            mistake = mis.find_one({
-                "編號" : j
-            })
-            miss.append(mistake)
-
     total = 0
-    misbook = mis.find()
-    for doc in misbook:
-        total += 1
+    for det in cur.execute(f'SELECT * FROM detect'):
+        # print(correct[det[1]])    
+        if correct[det[1]] != int(det[2]):        
+            total += 1
+            number, dp, cp = det[1], det[2], correct[det[1]]
+            m = [number, dp, cp]
+            miss.append(m)    
+
+    for mis in miss:
+        cur.execute(f"INSERT INTO miss (`number`, `dp`, `cp`) VALUES ('{mis[0]}','{mis[1]}','{mis[2]}')")
+
     return render_template("check.html",miss = miss, total = total)
 app.run()
