@@ -1,4 +1,4 @@
-import re, sqlite3
+import sqlite3
 from flask import Flask, render_template, url_for, request
 app = Flask(__name__)
 
@@ -29,6 +29,9 @@ def detectdata():
 
     for mis in miss:
         cur.execute(f"INSERT INTO miss (`number`, `dp`, `cp`) VALUES ('{mis[0]}','{mis[1]}','{mis[2]}')")
+    
+    con.commit()
+    con.close()
 
     return render_template("check.html",miss = miss, total = total)
 app.run()
