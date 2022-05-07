@@ -35,6 +35,8 @@ def detectdata():
     for mis in miss:
         cur.execute(f"INSERT INTO miss (`number`, `dp`, `cp`) VALUES ('{mis[0]}','{mis[1]}','{mis[2]}')")
     
+    miss.sort(key = lambda s: s[0])
+
     con.commit()
     con.close()
 
