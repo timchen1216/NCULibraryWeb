@@ -6,6 +6,7 @@ app = Flask(__name__)
 @app.route("/")
 def index():
     return render_template("index.html")
+
 # 檢查操作
 @app.route("/detectdata")
 def detectdata():
@@ -17,7 +18,7 @@ def detectdata():
     cordata = cur.fetchall()
     for cor in cordata:
         correct[cor[1]] = int(cor[2])
-    # print(correct)
+    # print(correct) 
 
     miss = []
     total = 0
