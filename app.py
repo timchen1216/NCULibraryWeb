@@ -13,13 +13,17 @@ def detectdata():
     cur = con.cursor()
 
     correct = {}
-    for cor in cur.execute(f'SELECT * FROM correct'):
+    cur.execute(f'SELECT * FROM correct')
+    cordata = cur.fetchall()
+    for cor in cordata:
         correct[cor[1]] = int(cor[2])
     # print(correct)
 
     miss = []
     total = 0
-    for det in cur.execute(f'SELECT * FROM detect'):
+    cur.execute(f'SELECT * FROM detect')
+    detdata = cur.fetchall()
+    for det in detdata:
         # print(correct[det[1]])    
         if correct[det[1]] != int(det[2]):        
             total += 1
